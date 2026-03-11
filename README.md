@@ -1,4 +1,4 @@
-# LamIPak Report Generation System
+# LamiPak Report Generation System
 
 A comprehensive, multi-platform reporting system for generating, managing, and analyzing work reports and technical assessments. The system includes mobile apps (iOS/Android), a web dashboard, and a powerful backend API with analytics capabilities.
 
@@ -422,7 +422,7 @@ EXPO_PUBLIC_SPOOF_EMAIL=  # Optional: for local role testing
 **Web & Mobile:**
 - **Web**: Deployed via Expo, served through web browsers
 - **iOS**: App Store (App ID: 6741105334)
-- **Android**: Google Play Store (via Expo)
+- **Android**: APK file (via Expo)
 - **API Endpoint**: `https://lamipak.koyeb.app/`
 
 **Backend:**
@@ -448,22 +448,6 @@ Backend:
     └── Koyeb Container
         └── Supervisord manages FastAPI + LibreTranslate
 ```
-
----
-
-### Environment-Specific Configurations
-
-| Config | Development | Production |
-|--------|-------------|-----------|
-| **API URL** | `http://localhost:8000/` | `https://lamipak.koyeb.app/` |
-| **Auth** | AWS Cognito (dev pool) | AWS Cognito (prod pool) |
-| **Database** | DynamoDB (dev tables) | DynamoDB (prod tables) |
-| **S3 Bucket** | `lamipak-dev` | `lamipak-prod` |
-| **Translation** | Local LibreTranslate | Koyeb LibreTranslate service |
-| **Logs** | Local files + stdout | CloudWatch + Koyeb logs |
-| **CORS** | localhost:* allowed | Production domain only |
-
----
 
 ## 🔌 Integrations & External Services
 
@@ -567,8 +551,7 @@ DELETE   /management/users/<userID>
 - AWS credentials: AWS IAM roles (no hardcoded keys)
 - Cognito config: Repository files (public)
 - Database encryption: AWS KMS (enabled by default)
-- API keys: Environment variables (CI/CD secrets)
-- Firebase/Secret Manager: For production secrets
+- API keys: Koyeb secrets
 
 **Rotation Policy:**
 - AWS tokens: Automatically rotated via IAM
@@ -589,13 +572,10 @@ DELETE   /management/users/<userID>
 ### 1. Clone Repositories
 
 ```bash
-git clone https://github.com/lamipak/report_generation.git
-cd report_generation
-
-# Individual repos (if separate)
-git clone https://github.com/lamipak/report-backend.git lami-report-backend
-git clone https://github.com/lamipak/report-web.git lami-report-web
-git clone https://github.com/lamipak/technical-assistant.git TechnicalAssistant
+# Individual repos
+git clone https://github.com/pradeeptyagi23/lami-report-backend.git lami-report-backend
+git clone https://github.com/pradeeptyagi23/lami-report-web.git lami-report-web
+git clone https://github.com/pradeeptyagi23/lami-mobile-report.git TechnicalAssistant
 ```
 
 ### 2. Backend Setup
@@ -634,7 +614,7 @@ npm install
 echo 'EXPO_PUBLIC_API_BASE_URL=http://localhost:8000/' > .env
 
 # Start development server
-npm start
+npx expo start -w
 
 # Select 'w' for web browser
 ```
@@ -667,17 +647,14 @@ Cognito:
   - User groups for permissions (admin, manager, user)
 
 DynamoDB:
-  - Tables created: allLamiUsers, lamiUserWorkReport, lamiTechnicalReport
+  - Tables created: lamiUser, allLamiUsers, lamiUserWorkReport, lamiTechnicalReport
   - Global secondary indexes configured
   - Backups enabled
 
 S3:
-  - Bucket created for file uploads
-  - CORS enabled for web app
+  - lamiusertechreports and lamiuserworkreports Bucket created for file uploads
   - Lifecycle policies for cleanup
 
-RDS/Aurora (optional):
-  - For KPI statistics caching
 ```
 
 ---
@@ -715,21 +692,6 @@ npm run ios                      # Run iOS version
 - **Debug logging**: Console logs for API requests/responses
 - **Draft auto-save**: Technical Assistant saves form state to SQLite
 
-### Testing
-
-```bash
-# Backend tests (if available)
-cd lami-report-backend
-python -m pytest
-
-# Frontend tests (if available)
-cd lami-report-web
-npm test
-
-# Mobile tests (if available)
-cd TechnicalAssistant
-npm test
-```
 
 ---
 
@@ -794,32 +756,13 @@ Additional documentation files in this project:
 
 ---
 
-## 🤝 Contributing
-
-1. Create a feature branch from `main`
-2. Make your changes (follow existing code style)
-3. Test thoroughly in development environment
-4. Commit with clear messages
-5. Push and create a pull request
-6. Code review required before merge
 
 ---
 
 ## 📞 Support & Contact
 
-- **Backend Issues**: Contact backend team or repository maintainer
-- **Frontend Issues**: Contact frontend team or repository maintainer
-- **Mobile Issues**: Contact mobile team or repository maintainer
-- **AWS/Infrastructure**: Contact DevOps/Infrastructure team
-- **General Questions**: Create an issue in the repository
+Pradeep Tyagi
+Email - pradeep.tyagi@lamipak.biz
 
 ---
 
-## 📄 License
-
-0BSD License - See LICENSE file in each repository for details.
-
----
-
-**Last Updated:** March 2026  
-**Maintained By:** LamIPak Development Team

@@ -30,7 +30,7 @@ LamIPak Report Generation System is an enterprise-grade reporting platform that 
 
 The system consists of three main applications:
 1. **Work Report Web** - React-based web dashboard for work report generation
-2. **Technical Assistant** - React Native mobile app (iOS/Android) for detailed technical assessments
+2. **LamIPak Report Mobile** - React Native mobile app (iOS/Android) for detailed technical assessments
 3. **Report Backend** - FastAPI server handling report generation, analytics, and data storage
 
 ---
@@ -41,7 +41,7 @@ The system consists of three main applications:
 |------------|---------|-----------|----------|
 | **lami-report-backend** | REST API for report generation, KPI stats, management endpoints | Python 3.11, FastAPI, Uvicorn | Server (Docker, Koyeb) |
 | **lami-report-web** | Web dashboard for work report generation and submission | React 18.3, Expo 52, React Native Web | Web (Browser) |
-| **TechnicalAssistant** | Mobile app for comprehensive technical report creation | React Native 0.74, Expo 51, React Navigation | iOS/Android (Expo) |
+| **lami-report-mobile** | Mobile app for comprehensive technical report creation | React Native 0.74, Expo 51, React Navigation | iOS/Android (Expo) |
 
 ### Key Technology Choices
 
@@ -152,7 +152,7 @@ UI: react-native-paper, react-native-vector-icons
 
 ---
 
-### 3. **TechnicalAssistant**
+### 3. **lami-report-mobile**
 Native mobile application (iOS/Android) for comprehensive technical report generation.
 
 **Purpose & Scope:**
@@ -303,7 +303,7 @@ lami-report-web/
 ### Mobile App Architecture
 
 ```
-TechnicalAssistant/
+lami-report-mobile/
 ├── App.js                          # Main app entry, navigation setup
 ├── ReportContext.js               # Report state management
 ├── UserContext.js                 # User/auth state
@@ -379,8 +379,8 @@ cd lami-report-web
 npm install
 npm start  # Opens Expo dev server
 
-# Mobile (Technical Assistant)
-cd TechnicalAssistant
+# Mobile (lami-report-mobile)
+cd lami-report-mobile
 npm install
 npm start
 # Then select 's' for web, 'a' for Android, or 'i' for iOS
@@ -514,12 +514,12 @@ DELETE   /management/users/<userID>
 
 | Resource | Owner | Access |
 |----------|-------|--------|
-| **AWS Account** | Lamipak Admin | Root account controlled by Pradeep Tyagi |
-| **DynamoDB** | Database Team | Read/Write via IAM roles |
-| **S3 Buckets** | Ops Team | Upload/Download via IAM policies |
-| **Cognito User Pools** | Auth Team | User management via AWS console |
-| **CloudWatch** | DevOps Team | Log viewing and alerts |
-| **Lambda Functions** | Backend Team | Code deployment via CI/CD |
+| **AWS Account** | Pradeep Tyagi | Root account controlled by Pradeep Tyagi |
+| **DynamoDB** | Pradeep Tyagi | Read/Write via IAM roles controlled by Pradeep Tyagi |
+| **S3 Buckets** | Pradeep Tyagi | Upload/Download via IAM policies controlled by Pradeep Tyagi |
+| **Cognito User Pools** | Pradeep Tyagi | User management via AWS console controlled by Pradeep Tyagi |
+| **CloudWatch** | Pradeep Tyagi | Log viewing and alerts controlled by Pradeep Tyagi |
+| **Lambda Functions** | Pradeep Tyagi | Code deployment via CI/CD controlled by Pradeep Tyagi |
 
 ---
 
@@ -528,8 +528,8 @@ DELETE   /management/users/<userID>
 | Repository | Owner | Access Level |
 |------------|-------|--------------|
 | **lami-report-backend** | Pradeep Tyagi | Admin |
-| **lami-report-web** | Frontend Team | Maintainer |
-| **TechnicalAssistant** | Mobile Team | Maintainer |
+| **lami-report-web** | Pradeep Tyagi | Admin |
+| **lami-report-mobile** | Pradeep Tyagi | Admin |
 
 ---
 
@@ -537,11 +537,11 @@ DELETE   /management/users/<userID>
 
 | Platform | Services | Owners | Credentials |
 |----------|----------|--------|-------------|
-| **Koyeb** | Backend hosting, LibreTranslate | DevOps/Backend Lead | Dashboard login required |
-| **Expo** | Build pipeline, distribution | Mobile Team | Expo account + EAS CLI |
-| **App Store Connect** | iOS app distribution | Mobile Team | Apple Developer account (Team ID) |
-| **Google Play Console** | Android app distribution | Mobile Team | Google Play Developer account |
-| **DockerHub** | Container images | DevOps | registry.hub.docker.com credentials |
+| **Koyeb** | Backend hosting, LibreTranslate | Pradeep Tyagi | Dashboard login controlled by Pradeep Tyagi |
+| **Expo** | Build pipeline, distribution | Pradeep Tyagi | Expo account + EAS CLI controlled by Pradeep Tyagi |
+| **App Store Connect** | iOS app distribution | Pradeep Tyagi | Apple Developer account controlled by Pradeep Tyagi |
+| **Google Play Console** | Android app distribution | Pradeep Tyagi | Google Play Developer account controlled by Pradeep Tyagi |
+| **DockerHub** | Container images | Pradeep Tyagi | registry.hub.docker.com credentials controlled by Pradeep Tyagi |
 
 ---
 
@@ -575,7 +575,7 @@ DELETE   /management/users/<userID>
 # Individual repos
 git clone https://github.com/pradeeptyagi23/lami-report-backend.git lami-report-backend
 git clone https://github.com/pradeeptyagi23/lami-report-web.git lami-report-web
-git clone https://github.com/pradeeptyagi23/lami-mobile-report.git TechnicalAssistant
+git clone https://github.com/pradeeptyagi23/lami-report-mobile.git lami-report-mobile
 ```
 
 ### 2. Backend Setup
@@ -622,7 +622,7 @@ npx expo start -w
 ### 4. Mobile App Setup
 
 ```bash
-cd TechnicalAssistant
+cd lami-report-mobile
 
 # Install dependencies
 npm install

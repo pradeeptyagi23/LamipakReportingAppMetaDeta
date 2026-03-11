@@ -741,20 +741,7 @@ npm run ios                      # Run iOS version
        └──────────────────────────────────┘
 ```
 
----
 
-## 📝 Documentation
-
-Additional documentation files in this project:
-
-- [TECHNICAL_SPECS.md](TECHNICAL_SPECS.md) - Detailed API specifications
-- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Implementation details
-- [USAGE_GUIDE.md](USAGE_GUIDE.md) - User guide for management features
-- [USAGE_METRICS_FEATURE_FLAG.md](USAGE_METRICS_FEATURE_FLAG.md) - Feature flag configuration
-- [BUG_FIXES_REPORT.md](BUG_FIXES_REPORT.md) - Recently fixed issues
-- [DYNAMO_RELATIONSHIPS.md](lami-report-backend/DYNAMO_RELATIONSHIPS.md) - Database schema
-
----
 
 
 ---

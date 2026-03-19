@@ -29,78 +29,64 @@ Both Lambda functions are assumed to be already attached to the Cognito User Poo
 ## Lambda Trigger 1: Pre Sign-up Domain Check
 Purpose: allow signup only from lamipak.biz email addresses.
 
-    const ALLOWED_DOMAIN = "lamipak.biz";
+const domain = "lamipak.biz";
+exports.handler = async (event) => {
+    const email = event.request.userAttributes.email;
 
-    exports.handler = async (event) => {
-      if (event.triggerSource === "PreSignUp_SignUp") {
-        const email = (event?.request?.userAttributes?.email || "").toLowerCase().trim();
-
-        if (!email || !email.endsWith(`@${ALLOWED_DOMAIN}`)) {
-          throw new Error(`Only @${ALLOWED_DOMAIN} email addresses are allowed.`);
+    if (event.triggerSource === "PreSignUp_SignUp") {
+        if (!email || !email.endsWith(`@${domain}`)) {
+            throw new Error("Email must be from lamipak.biz domain");
         }
-      }
+    }
 
-      return event;
-    };
+    // If the email is valid, continue the signup process
+    return event;
+};
 
 What it does:
 1. Reads email from the Cognito event.
-2. Converts email to lowercase and trims spaces.
-3. Rejects signup if email is missing or not in allowed domain.
-4. Returns the event when validation passes.
+2. Rejects signup if email is missing or not in allowed domain.
+3. Returns the event when validation passes.
 
 ## Lambda Trigger 2: Post Confirmation User Insert
 Purpose: create a user record in DynamoDB after successful email confirmation.
 
-    const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-    const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-    const client = new DynamoDBClient({});
-    const ddb = DynamoDBDocumentClient.from(client);
+// Initialize DynamoDB Document Client
+const client = new DynamoDBClient({ region: "us-east-1" });
+const dynamoDb = DynamoDBDocumentClient.from(client);
 
-    const USERS_TABLE = process.env.USERS_TABLE || "allLamiUsers";
+export const handler = async (event) => {
+    const email = event.request.userAttributes.email;
+    const userId = event.request.userAttributes.sub;
+    const signupDate = new Date().toISOString();
 
-    exports.handler = async (event) => {
-      if (event.triggerSource !== "PostConfirmation_ConfirmSignUp") {
-        return event;
-      }
-
-      const attrs = event.request?.userAttributes || {};
-      const userID = attrs.sub;
-      const email = (attrs.email || "").toLowerCase();
-      const fullName = attrs.name || attrs.given_name || "";
-      const now = new Date().toISOString();
-
-      if (!userID || !email) {
-        return event;
-      }
-
-      try {
-        await ddb.send(
-          new PutCommand({
-            TableName: USERS_TABLE,
+    // Check if this is the post-confirmation trigger
+    if (event.triggerSource === "PostConfirmation_ConfirmSignUp") {
+        const params = {
+            TableName: "lamiUser",
             Item: {
-              userID,
-              loginID: email,
-              email,
-              fullName,
-              role: "user",
-              isSuperUser: false,
-              clusters: [],
-              createdAt: now,
-              updatedAt: now,
-            },
-            ConditionExpression: "attribute_not_exists(userID)",
-          })
-        );
-      } catch (err) {
-        if (err.name !== "ConditionalCheckFailedException") {
-          throw err;
-        }
-      }
+                userId: userId,
+                email: email,
+                signupDate: signupDate
+            }
+        };
 
-      return event;
-    };
+        try {
+            // Use PutCommand to add the user data to DynamoDB
+            await dynamoDb.send(new PutCommand(params));
+            console.log("User added to DynamoDB:", params.Item);
+        } catch (error) {
+            console.error("Error adding user to DynamoDB:", error);
+            throw error;  // Re-throw the error to handle it as an execution failure
+        }
+    }
+
+    // Return the event if all succeeds
+    return event;
+};
 
 What it does:
 1. Executes only after signup confirmation.
@@ -167,11 +153,6 @@ In short, DynamoDB is a strong fit here because the application primarily needs 
 2. User does not confirm email:
    Account remains Unconfirmed, signin does not complete successfully.
 
-3. Duplicate post-confirmation event:
-   DynamoDB conditional put prevents duplicate user record creation.
-
-4. Missing required attributes in trigger event:
-   Post Confirmation Lambda safely exits without write.
 
 ## Sequence Summary
 1. SignUp request enters Cognito.

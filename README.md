@@ -74,7 +74,7 @@ The system consists of three main applications:
 Backend API server providing report generation, analytics, and management capabilities.
 
 **Purpose & Scope:**
-- Generate downloadable work reports in DOCX format
+- Generate downloadable work reports in pdf format
 - Provide real-time KPI statistics and usage analytics
 - Manage user profiles and cluster-level access control
 - Handle multi-language translation requests
